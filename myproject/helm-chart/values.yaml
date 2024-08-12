@@ -1,0 +1,117 @@
+replicaCount: 1
+
+image:
+  backend:
+    repository: mallaashutosh/backend
+    tag: "1.10"
+    pullPolicy: IfNotPresent
+  mysql:
+    repository: mallaashutosh/database
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  frontend:
+    repository: mallaashutosh/frontend
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  prometheus:
+    repository: prom/prometheus
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  alertmanager:
+    repository: prom/alertmanager
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  grafana:
+    repository: grafana/grafana
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+cronJob:
+  schedule: "0 7 * * *"
+  command: ["python", "manage.py", "fetchdata"]
+  djangoSettingsModule: "stocks_monitoring.settings"
+  databaseUrl: "mysql://root:ashu1234@mysql-service:3306/techdemo"
+
+mysql:
+  persistence:
+    storage: 1Gi
+    accessMode: ReadWriteOnce
+    hostPath: "/mnt/data"
+
+service:
+  backend:
+    type: NodePort
+    port: 8000
+    nodePort: 30006
+  frontend:
+    type: NodePort
+    port: 3000
+    nodePort: 30005
+  mysql:
+    type: ClusterIP
+    port: 3306
+  prometheus:
+    type: NodePort
+    port: 9090
+    nodePort: 30003
+  alertmanager:
+    type: NodePort
+    port: 9093
+    nodePort: 30004
+  grafana:
+    type: NodePort
+    port: 3000
+    nodePort: 30010
+
+# Keep or adjust the following settings as needed:
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+volumes: []
+volumeMounts: []
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

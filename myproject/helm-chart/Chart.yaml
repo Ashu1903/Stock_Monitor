@@ -1,0 +1,5 @@
+apiVersion: v2
+name: stock-monitoring-chart
+description: A Helm chart for deploying the Stock Monitoring system
+version: 0.1.0
+appVersion: "1.0"

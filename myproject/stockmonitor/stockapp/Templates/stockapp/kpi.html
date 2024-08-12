@@ -1,0 +1,52 @@
+<!-- stockapp/templates/stockapp/kpi.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Market KPIs</title>
+</head>
+<body>
+    <h1>Daily Closing Prices</h1>
+    <ul>
+        {% for stock in daily_closing_prices %}
+            <li>{{ stock.ticker }}: {{ stock.close }}</li>
+        {% endfor %}
+    </ul>
+
+    <h1>Price Change Percentage</h1>
+    <h2>Last 24 Hours</h2>
+    <ul>
+        {% for stock in change_24h %}
+            <li>{{ stock.ticker }}: {{ stock.change_percentage }}%</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Last 30 Days</h2>
+    <ul>
+        {% for stock in change_30d %}
+            <li>{{ stock.ticker }}: {{ stock.change_percentage }}%</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Last 1 Year</h2>
+    <ul>
+        {% for stock in change_1y %}
+            <li>{{ stock.ticker }}: {{ stock.change_percentage }}%</li>
+        {% endfor %}
+    </ul>
+
+    <h1>Top Gainers</h1>
+    <ul>
+        {% for stock in top_gainers %}
+            <li>{{ stock.ticker }}: {{ stock.change }}%</li>
+        {% endfor %}
+    </ul>
+
+    <h1>Top Losers</h1>
+    <ul>
+        {% for stock in top_losers %}
+            <li>{{ stock.ticker }}: {{ stock.change }}%</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

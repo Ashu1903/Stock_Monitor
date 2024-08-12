@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+spec:
+  capacity:
+    storage: {{ .Values.mysql.persistence.storage }}
+  accessModes:
+    - {{ .Values.mysql.persistence.accessMode }}
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: {{ .Values.mysql.persistence.hostPath }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  accessModes:
+    - {{ .Values.mysql.persistence.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.mysql.persistence.storage }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: "{{ .Values.image.mysql.repository }}:{{ .Values.image.mysql.tag }}"
+          ports:
+            - containerPort: {{ .Values.service.mysql.port }}  # Fixed: Using the port from service.mysql.port
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  selector:
+    app: mysql
+  type: {{ .Values.service.mysql.type }}  # Fixed: Using the type from service.mysql.type
+  ports:
+    - port: {{ .Values.service.mysql.port }}  # Fixed: Using the port from service.mysql.port
+      targetPort: {{ .Values.service.mysql.port }}  # Fixed: Using the port from service.mysql.port

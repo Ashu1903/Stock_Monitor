@@ -1,0 +1,19 @@
+global:
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_from: 'malla2ashutosh@gmail.com'
+  smtp_auth_username: 'malla2ashutosh@gmail.com'
+  smtp_auth_password: 'snvyvpyexzvldsth'
+  smtp_require_tls: true
+
+receivers:
+  - name: 'email_notifications'
+    email_configs:
+      - to: 'nishantddubey4@gmail.com'
+        send_resolved: true
+
+route:
+  receiver: 'email_notifications'
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 24h
